@@ -8,9 +8,9 @@
     
     "unspecified_default_timeout": 5,
     "default_guild_timeouts": {
-        "destroy": 10,
+        "destroy": 20,
         "concat": 12,
-        "download": 15,
+        "download": 30,
         "help": 1
     },
     "default_user_timeouts": {
