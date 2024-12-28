@@ -535,8 +535,8 @@ def edit(file, groupData, par, workingDir = "", resourceDir = "..", toVideo = Fa
                 if getName(i) == "reddit":
                     nn = ffmpeg.filter_multi_output([ffmpeg.input(i), video], "scale2ref", w = "iw", h = "ih")
                     video = nn[1].overlay(nn[0])
-                if cb and getName(i) == "bandicam":
-                    bandicam()
+                if cb and getName(i) == "kinemaster":
+                    kinemaster()
                     cb = False
                 if ch and getName(i) == "hypercam":
                     hypercam()
