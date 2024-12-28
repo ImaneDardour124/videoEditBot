@@ -55,5 +55,5 @@
         "will",
         "say"
     ],
-    "meta_prefixes": ["veb", "videoeditbot", "destroy"]
+    "meta_prefixes": ["veb", "videoeditbot", "youtube"]
 }
