@@ -188,7 +188,7 @@ def timecodeBreak(file, m):
     new.write(byteData)
 
 def edit(file, groupData, par, workingDir = "", resourceDir = "..", toVideo = False, toGif = False, disallowTimecodeBreak = False, HIDE_FFMPEG_OUT = True, HIDE_ALL_FFMPEG = True, SHOW_TIMER = False, fixPrint = fixPrint):
-    videoFX = ['playreverse', 'hmirror', 'vmirror', 'lag', 'rlag', 'shake', 'fisheye', 'zoom', 'bottomtext', 'toptext', 'normalcaption', 'topcap', 'bottomcap', 'topcaption', 'bottomcaption', 'hypercam', 'bandicam', 'deepfry', 'contrast', 'hue', 'hcycle', 'speed', 'vreverse', 'areverse', 'reverse', 'wscale', 'hscale', 'sharpen', 'watermark', 'framerate', 'invert', 'wave', 'waveamount', 'wavestrength', 'acid', 'hcrop', 'vcrop', 'hflip', 'vflip']
+    videoFX = ['playreverse', 'hmirror', 'vmirror', 'lag', 'rlag', 'shake', 'fisheye', 'zoom', 'bottomtext', 'toptext', 'normalcaption', 'topcap', 'bottomcap', 'topcaption', 'bottomcaption', 'hypercam', 'kinemaster', 'deepfry', 'contrast', 'hue', 'hcycle', 'speed', 'vreverse', 'areverse', 'reverse', 'wscale', 'hscale', 'sharpen', 'watermark', 'framerate', 'invert', 'wave', 'waveamount', 'wavestrength', 'acid', 'hcrop', 'vcrop', 'hflip', 'vflip']
     audioFX = ['pitch', 'reverb', 'earrape', 'bass', 'mute', 'threshold', 'crush', 'wobble', 'music', 'sfx', 'volume', 'autotune']
 
     d = {i: None for i in par}
@@ -446,7 +446,7 @@ def edit(file, groupData, par, workingDir = "", resourceDir = "..", toVideo = Fa
 
         def fisheye():
             nonlocal video, audio
-            d['fisheye'] = int(constrain(d['fisheye'], 1, 2))
+            d['fisheye'] = int(constrain(d['fisheye'], 1, 10))
             for i in range(d['fisheye']):
                 video = video.filter("v360" , input = "equirect", output = "ball")
                 video = video.filter("scale", w = width, h = height)
@@ -509,9 +509,9 @@ def edit(file, groupData, par, workingDir = "", resourceDir = "..", toVideo = Fa
             nonlocal video, audio
             video = video.overlay(ffmpeg.input(f"{resourceDir}/images/watermark/hypercam.png").filter("scale", w = width, h = height))
 
-        def bandicam():
+        def kinemaster():
             nonlocal video, audio
-            video = video.overlay(ffmpeg.input(f"{resourceDir}/images/watermark/bandicam.png").filter("scale", w = width, h = height))
+            video = video.overlay(ffmpeg.input(f"{resourceDir}/images/watermark/kinemaster.png").filter("scale", w = width, h = height))
 
         def watermark():
             nonlocal video, audio, height
@@ -579,7 +579,7 @@ def edit(file, groupData, par, workingDir = "", resourceDir = "..", toVideo = Fa
             nonlocal video, audio
             if d['speed'] < 0:
                 d['reverse'] = 1
-            q = constrain(abs(d['speed']), 0.5, 25)
+            q = constrain(abs(d['speed']), 0.125, 100)
             video = video.filter("setpts", (str(1 / q)+"*PTS"))
             if hasAudio:
                 audio = audio.filter("atempo", q)
@@ -675,7 +675,7 @@ def edit(file, groupData, par, workingDir = "", resourceDir = "..", toVideo = Fa
             'topcaption': topcaption,
             'bottomcaption': topcaption,
             'hypercam': hypercam,
-            'bandicam': bandicam,
+            'kinemaster': kinemaster,
             'deepfry': deepfry,
             'contrast': contrast,
             'hue': hue,
@@ -732,7 +732,7 @@ def edit(file, groupData, par, workingDir = "", resourceDir = "..", toVideo = Fa
             SOXCMD += ["gain", str(d['earrape'])]
             return AUDPRE
         def pitch(SOXCMD, AUDPRE):
-            d['pitch'] = 12 * int(constrain(d['pitch'], -100, 100))
+            d['pitch'] = 12 * int(constrain(d['pitch'], -1000, 1000))
             SOXCMD += ["pitch", str(d['pitch'])]
             return AUDPRE
         def reverb(SOXCMD, AUDPRE):
@@ -962,7 +962,7 @@ def videoEdit(originalFile, args, workingDir = "./", resourceDir = path.dirname(
         "earrape"       :[V, "er"  , round(r(0, 100)) ],
         "deepfry"       :[V, "df"  , round(r(0, 100)) ],
         "contrast"      :[V, "ct"  , round(r(0, 100)) ],
-        "speed"         :[V, "sp"  , r(-4, 4) ],
+        "speed"         :[V, "sp"  , r(-64, 64) ],
         "timecode"      :[V, "timc", None ],
         "crash"         :[V, "crsh", None ],
         "bass"          :[V, "bs"  , round(r(0, 100)) ],
@@ -977,7 +977,7 @@ def videoEdit(originalFile, args, workingDir = "./", resourceDir = path.dirname(
         "hue"           :[V, "hue" , round(r(0, 100)) ],
         "hcycle"        :[V, "huec", round(r(0, 100)) ],
         "hypercam"      :[V, "hypc", 1 ],
-        "bandicam"      :[V, "bndc", 1 ],
+        "kinemaster"      :[V, "km", 1 ],
         "normalcaption" :[S, "nc"  , str(r(0, 100)) ],
         "topcap"        :[S, "cap" , str(r(0, 100)) ],
         "bottomcap"     :[S, "bcap", str(r(0, 100)) ],
@@ -988,9 +988,9 @@ def videoEdit(originalFile, args, workingDir = "./", resourceDir = path.dirname(
         "datamosh"      :[V, "dm"  , int(r(0, 100)) ],
         "stutter"       :[S, "st"  , int(r(0, 25)) ],
         "ytp"           :[V, "ytp" , int(r(1, 2)) ],
-        "fisheye"       :[V, "fe"  , int(r(1, 2)) ],
+        "fisheye"       :[V, "fe"  , int(r(1, 10)) ],
         "mute"          :[V, "mt"  , None ],
-        "pitch"         :[V, "pch" , int(r(-100, 100)) ],
+        "pitch"         :[V, "pch" , int(r(-1000, 1000)) ],
         "reverb"        :[V, "rv"  , int(r(0, 100)) ],
         "reverbdelay"   :[V, "rvd" , int(r(0, 100)) ],
         "hmirror"       :[V, "hm"  , 1 ],
